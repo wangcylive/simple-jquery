@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+    <title>event</title>
+</head>
+<body>
+<h1>simple jQuery Event</h1>
+
+<h2>$li.on("click", handler)</h2>
+<div id="first">
+    <ul>
+        <li>
+            1
+            <ol>
+                <li class="l">a</li>
+                <li>b</li>
+            </ol>
+        </li>
+        <li>2</li>
+        <li class="l">3</li>
+        <li>4</li>
+        <li id="li-5">5</li>
+    </ul>
+
+    <button>$li.off("click", handler)</button>
+</div>
+
+<h2>$second.on("click", selector, handler)</h2>
+<div id="second">
+    <button>add links</button>
+    <a href="http://www.baidu.com">#baidu#</a>
+    <a href="http://www.baidu.com">#baidu#</a>
+</div>
+
+<h3>$third.one("click", handler)</h3>
+<div id="third">
+    <button class="btn-01">one click</button>
+    <button class="btn-02">on click</button>
+    <button class="btn-03">off click</button>
+</div>
+
+<h4>$fourth.off("click", selector)</h4>
+<div id="fourth">
+    <button class="btn-01">on click</button>
+    <button class="off">off click</button>
+</div>
+
+<!--<script src="jquery-2.1.3.min.js"></script>-->
+<script src="../src/simple-jQuery.js"></script>
+<script>
+    (function() {
+        var $body = $("body");
+
+        // first
+        var $li = $("#first li");
+        $li.hide().show().on("click", function(event) {
+            console.log(this.textContent, event.type);
+        });
+
+        $("#first button").on("click", function() {
+            $li.off("click");
+        });
+
+        // second
+        var $second = $("#second");
+        $second.on("click", "a", function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            console.log(event);
+        }).one("click", "button", function() {
+            var a;
+
+            for(var i = 0; i < 10; i++) {
+                a = document.createElement("a");
+                a.href = "http://www.baidu.com";
+                a.textContent = "#baidu#";
+
+                $second.append(a).append(" ");
+            }
+
+        });
+
+        // third
+        function showTextContent(event) {
+            console.log(event);
+            alert(this.textContent);
+        }
+
+        $("#third .btn-01").one("click", showTextContent);
+
+        $("#third .btn-02").on("click", showTextContent);
+
+        $("#third .btn-03").on("click", function() {
+            $("#third button").off("click", showTextContent);
+        });
+
+        // fourth
+        function fourthClickFn(event) {
+            alert("fourthClickFn");
+        }
+        $("#fourth").on("click", ".btn-01", fourthClickFn).one("click", ".off", function() {
+            $("#fourth").off("click", ".btn-01", fourthClickFn);
+        }).on("click", function(event) {
+            console.log(event);
+        });
+    }());
+</script>
+</body>
+</html>

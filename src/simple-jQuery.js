@@ -14,7 +14,7 @@
         return new $.fn.init(selector);
     };
 
-    var version = "1.0.0",
+    var version = "1.1.0",
         expando = "JQ" + (version + Math.random()).replace(/\D/g, ""),
         guid = 0;  // globally unique identifier
 
@@ -203,21 +203,12 @@
     }
 
     function defaultDisplay(nodeName) {
-        var iframe = document.createElement("iframe");
-        iframe.width = 0;
-        iframe.height = 0;
-        iframe.frameBorder = 0;
-
-        document.documentElement.appendChild(iframe);
-
-        var doc = iframe.contentDocument;
-
-        var elem = doc.createElement(nodeName);
-        doc.body.appendChild(elem);
+        var elem = document.createElement(nodeName);
+        document.body.appendChild(elem);
 
         var display = $.css(elem, "display");
 
-        document.documentElement.removeChild(iframe);
+        document.body.removeChild(elem);
 
         return display;
     }
@@ -470,9 +461,15 @@
                 className = className.split(/\s+/);
 
                 this.each(function(itemNode) {
+                    var curClassName = itemNode.className.split(/\s+/);
+
                     className.forEach(function(itemName) {
-                        itemNode.classList.add(itemName);
-                    })
+                        if(-1 === curClassName.indexOf(itemName)) {
+                            curClassName.push(itemName);
+                        }
+                    });
+
+                    itemNode.className = curClassName.join(" ");
                 });
             }
 
@@ -483,9 +480,17 @@
                 className = className.split(/\s+/);
 
                 this.each(function(itemNode) {
+                    var curClassName = itemNode.className.split(/\s+/);
+
                     className.forEach(function(itemName) {
-                        itemNode.classList.remove(itemName);
+                        var index = curClassName.indexOf(itemName);
+
+                        if(-1 !== index) {
+                            curClassName.splice(index, 1);
+                        }
                     });
+
+                    itemNode.className = curClassName.join(" ");
                 })
             }
 
@@ -501,7 +506,7 @@
                     var itemNode = this[i];
 
                     has = className.every(function(itemName) {
-                        return itemNode.classList.contains(itemName)
+                        return -1 !== itemNode.className.split(/\s+/).indexOf(itemName);
                     });
 
                     if(!has) {

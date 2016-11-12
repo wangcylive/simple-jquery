@@ -14,7 +14,7 @@
         return new $.fn.init(selector);
     };
 
-    var version = "1.1.0",
+    var version = "1.2.0",
         expando = "JQ" + (version + Math.random()).replace(/\D/g, ""),
         guid = 0;  // globally unique identifier
 
@@ -51,8 +51,6 @@
 
         return [];
     }
-
-    var _defaultDisplayCache = {};
 
     (function () {
         if (typeof window.CustomEvent === "function") {
@@ -175,30 +173,7 @@
         var elem, style;
 
         for(var i = 0; i < elements.length; i++) {
-            elem = elements[i];
-            style = elem.style;
-
-            var elemGuid = setElemGuid(elem);
-
-            if(show) {
-                style.display = "";
-
-                if($.isHidden(elem)) {
-                    if(_defaultDisplayCache.hasOwnProperty(elemGuid)) {
-                        style.display = _defaultDisplayCache[elemGuid];
-                    } else {
-                        style.display = _defaultDisplayCache[elemGuid] = defaultDisplay(elem.nodeName);
-                    }
-                } else {
-                    _defaultDisplayCache[elemGuid] = $.css(elem, "display");
-                }
-            } else {
-                if(!$.isHidden(elem)) {
-                    _defaultDisplayCache[elemGuid] = $.css(elem, "display");
-
-                    style.display = "none";
-                }
-            }
+            elements[i].style.display = show ? "" : "none";
         }
     }
 
